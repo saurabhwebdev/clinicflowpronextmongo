@@ -31,6 +31,7 @@ export interface ISystemUptime extends Document {
   updateCurrentSessionUptime(): ISystemUptime;
   getTotalUptime(): number;
   getFormattedUptime(): string;
+  updateSessionStatistics(): ISystemUptime;
 }
 
 const SystemUptimeSchema = new Schema<ISystemUptime>({
@@ -117,6 +118,31 @@ SystemUptimeSchema.methods.updateCurrentSessionUptime = function() {
     this.currentSessionUptimeMs = now.getTime() - this.currentSessionStartTime.getTime();
     this.lastUpdated = now;
   }
+  return this;
+};
+
+// Method to update session statistics
+SystemUptimeSchema.methods.updateSessionStatistics = function() {
+  // Update current session uptime first
+  this.updateCurrentSessionUptime();
+  
+  // Update longest session if current session is longer
+  if (this.currentSessionUptimeMs > this.longestSessionMs) {
+    this.longestSessionMs = this.currentSessionUptimeMs;
+  }
+  
+  // Calculate average session duration
+  // For the first session, average equals current session
+  if (this.totalSessions === 1) {
+    this.averageSessionMs = this.currentSessionUptimeMs;
+  } else {
+    // For multiple sessions, calculate proper average
+    // We need to consider that totalUptimeMs includes previous sessions
+    // and currentSessionUptimeMs is the current session
+    const totalSessionTime = this.totalUptimeMs + this.currentSessionUptimeMs;
+    this.averageSessionMs = totalSessionTime / this.totalSessions;
+  }
+  
   return this;
 };
 

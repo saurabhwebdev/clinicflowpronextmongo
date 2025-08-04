@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
-import { connectToDatabase } from '@/lib/mongodb';
+import connectDB from '@/lib/mongodb';
 import SystemUptime from '@/models/SystemUptime';
 
 // Helper function to get or create system uptime record
 async function getOrCreateSystemUptime(systemId = 'main-system') {
-  await connectToDatabase();
+  await connectDB();
   let systemUptime = await SystemUptime.findOne({ systemId });
   
   if (!systemUptime) {
@@ -27,8 +27,11 @@ async function getOrCreateSystemUptime(systemId = 'main-system') {
 // Helper function to update system uptime
 async function updateSystemUptime(systemId = 'main-system') {
   const systemUptime = await getOrCreateSystemUptime(systemId);
-  systemUptime.updateCurrentSessionUptime();
+  
+  // Always update session statistics when fetching
+  systemUptime.updateSessionStatistics();
   await systemUptime.save();
+  
   return systemUptime;
 }
 
@@ -93,6 +96,11 @@ export async function POST(request: NextRequest) {
       case 'start':
         // Start a new session
         if (!systemUptime.isCurrentlyRunning) {
+          // If there was a previous session, add it to total uptime
+          if (systemUptime.currentSessionUptimeMs > 0) {
+            systemUptime.totalUptimeMs += systemUptime.currentSessionUptimeMs;
+          }
+          
           systemUptime.isCurrentlyRunning = true;
           systemUptime.currentSessionStartTime = new Date();
           systemUptime.currentSessionUptimeMs = 0;
@@ -109,14 +117,7 @@ export async function POST(request: NextRequest) {
           systemUptime.isCurrentlyRunning = false;
           
           // Update statistics
-          if (systemUptime.currentSessionUptimeMs > systemUptime.longestSessionMs) {
-            systemUptime.longestSessionMs = systemUptime.currentSessionUptimeMs;
-          }
-          
-          // Calculate average session duration
-          const totalSessions = systemUptime.totalSessions;
-          const totalSessionTime = systemUptime.totalUptimeMs;
-          systemUptime.averageSessionMs = totalSessionTime / totalSessions;
+          systemUptime.updateSessionStatistics();
         }
         break;
         
@@ -140,6 +141,8 @@ export async function POST(request: NextRequest) {
         );
     }
     
+    // Always update session statistics after any action
+    systemUptime.updateSessionStatistics();
     await systemUptime.save();
     
     return NextResponse.json({
