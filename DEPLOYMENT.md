@@ -14,18 +14,21 @@
 4. Select "Next.js" as the framework preset
 
 ### Step 2: Configure Environment Variables
-In your Vercel project dashboard, go to Settings > Environment Variables and add:
+In your Vercel project dashboard, go to Settings > Environment Variables and add each variable:
 
-```
-MONGODB_URI=mongodb+srv://iamsaurabhthakur29:qyZkotKZVUuE6Tu7@cluster0.l69za6n.mongodb.net/docudocflask?retryWrites=true&w=majority&appName=Cluster0
-NEXTAUTH_URL=https://your-app-name.vercel.app
-NEXTAUTH_SECRET=clinicflow-super-secret-key-2024-production-ready
-GMAIL_USER=worlddj0@gmail.com
-GMAIL_APP_PASSWORD=uyos btpm rvsn toxt
-NODE_ENV=production
-```
+| Variable Name | Value | Environment |
+|---------------|-------|-------------|
+| `MONGODB_URI` | `mongodb+srv://iamsaurabhthakur29:qyZkotKZVUuE6Tu7@cluster0.l69za6n.mongodb.net/docudocflask?retryWrites=true&w=majority&appName=Cluster0` | Production, Preview, Development |
+| `NEXTAUTH_URL` | `https://your-app-name.vercel.app` | Production, Preview |
+| `NEXTAUTH_SECRET` | `clinicflow-super-secret-key-2024-production-ready` | Production, Preview, Development |
+| `GMAIL_USER` | `worlddj0@gmail.com` | Production, Preview, Development |
+| `GMAIL_APP_PASSWORD` | `uyos btpm rvsn toxt` | Production, Preview, Development |
+| `NODE_ENV` | `production` | Production |
 
-**Important:** Replace `your-app-name.vercel.app` with your actual Vercel domain.
+**Important Steps:**
+1. Replace `your-app-name.vercel.app` with your actual Vercel domain
+2. For each variable, click "Add" and select which environments it applies to
+3. Make sure to check all three environments (Production, Preview, Development) for most variables
 
 ### Step 3: Deploy
 1. Click "Deploy" in Vercel

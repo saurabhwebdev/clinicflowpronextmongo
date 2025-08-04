@@ -1,18 +1,8 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
   "framework": "nextjs",
   "functions": {
     "src/app/api/**/*.ts": {
       "maxDuration": 30
     }
-  },
-  "env": {
-    "MONGODB_URI": "@mongodb_uri",
-    "NEXTAUTH_URL": "@nextauth_url",
-    "NEXTAUTH_SECRET": "@nextauth_secret",
-    "GMAIL_USER": "@gmail_user",
-    "GMAIL_APP_PASSWORD": "@gmail_app_password",
-    "NODE_ENV": "production"
   }
 }
