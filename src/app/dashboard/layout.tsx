@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  User, 
-  Settings, 
-  Calendar, 
-  Users, 
-  LogOut, 
+import {
+  User,
+  Settings,
+  Calendar,
+  Users,
+  LogOut,
   Home,
   FileText,
   CreditCard,
@@ -95,10 +95,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const getInitials = (name: string) => {
     return name
       ? name
-          .split(' ')
-          .map(part => part[0])
-          .join('')
-          .toUpperCase()
+        .split(' ')
+        .map(part => part[0])
+        .join('')
+        .toUpperCase()
       : 'U';
   };
 
@@ -126,7 +126,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const getMenuItems = () => {
     const role = session?.user?.role;
-    
+
     // Base items that all users see
     const baseItems = [
       { href: '/dashboard', icon: Home, label: 'Dashboard' },
@@ -145,7 +145,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           { href: '/dashboard/reports', icon: FileText, label: 'Reports' },
           { href: '/dashboard/billing', icon: CreditCard, label: 'Billing' },
         ];
-      
+
       case 'doctor':
         return [
           ...baseItems,
@@ -155,7 +155,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           { href: '/dashboard/reports', icon: FileText, label: 'Reports' },
           { href: '/dashboard/billing', icon: CreditCard, label: 'Billing' },
         ];
-      
+
       case 'patient':
         return [
           ...baseItems,
@@ -163,7 +163,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           { href: '/dashboard/billing', icon: CreditCard, label: 'My Bills' },
           { href: '/dashboard/patients/settings', icon: Settings, label: 'Clinic Info' },
         ];
-      
+
       default:
         return baseItems;
     }
@@ -180,21 +180,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="min-h-screen bg-gray-50 flex">
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
         {/* Sidebar */}
-        <div 
+        <div
           className={`
             fixed top-0 left-0 z-50 h-screen bg-gradient-to-b from-white to-gray-50/50 backdrop-blur-sm border-r 
             transform transition-all duration-500 ease-out
             ${sidebarOpen ? 'w-[280px] translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0 lg:w-20'}
             lg:sticky lg:shadow-none
           `}
-          style={{ 
+          style={{
             borderColor: clinicSettings.primaryColor + '20',
             background: `linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(249,250,251,0.8) 100%)`
           }}
@@ -241,7 +241,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       <Link
                         href={item.href}
                         className="flex items-center px-3 py-2.5 rounded-xl transition-all duration-300 group relative hover:shadow-md hover:scale-[1.02]"
-                        style={{ 
+                        style={{
                           color: clinicSettings.primaryColor + 'CC',
                           backgroundColor: 'transparent'
                         }}
@@ -265,8 +265,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         </span>
                       </Link>
                     </TooltipTrigger>
-                    <TooltipContent 
-                      side="right" 
+                    <TooltipContent
+                      side="right"
                       className={`${sidebarOpen && 'lg:hidden'} bg-gray-900 text-white px-3 py-1.5 text-sm rounded-lg shadow-lg border-0`}
                     >
                       {item.label}
@@ -282,7 +282,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     <Link
                       href="/admin"
                       className="flex items-center px-3 py-2.5 rounded-xl transition-all duration-300 group hover:shadow-md hover:scale-[1.02]"
-                      style={{ 
+                      style={{
                         color: clinicSettings.accentColor + 'CC',
                         backgroundColor: 'transparent'
                       }}
@@ -306,8 +306,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       </span>
                     </Link>
                   </TooltipTrigger>
-                  <TooltipContent 
-                    side="right" 
+                  <TooltipContent
+                    side="right"
                     className={`${sidebarOpen && 'lg:hidden'} bg-gray-900 text-white px-3 py-1.5 text-sm rounded-lg shadow-lg border-0`}
                   >
                     Admin Panel
@@ -321,7 +321,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <button
                     onClick={() => setSidebarOpen(!sidebarOpen)}
                     className="flex items-center w-full px-3 py-2.5 rounded-xl transition-all duration-300 group hover:shadow-md hover:scale-[1.02]"
-                    style={{ 
+                    style={{
                       color: clinicSettings.primaryColor + 'CC',
                       backgroundColor: 'transparent'
                     }}
@@ -336,20 +336,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       e.currentTarget.style.transform = 'translateX(0)';
                     }}
                   >
-                                          <div className={`p-1.5 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm group-hover:shadow-md transition-all duration-300 ${!sidebarOpen && 'lg:mx-auto'}`}>
-                        <HamburgerIcon
-                          isOpen={sidebarOpen}
-                          color={clinicSettings.primaryColor}
-                          size="sm"
-                        />
-                      </div>
+                    <div className={`p-1.5 rounded-lg bg-white/50 backdrop-blur-sm shadow-sm group-hover:shadow-md transition-all duration-300 ${!sidebarOpen && 'lg:mx-auto'}`}>
+                      <HamburgerIcon
+                        isOpen={sidebarOpen}
+                        color={clinicSettings.primaryColor}
+                        size="sm"
+                      />
+                    </div>
                     <span className={`ml-3 font-medium transition-all duration-300 ${!sidebarOpen && 'lg:opacity-0 lg:invisible lg:translate-x-4'}`}>
                       {sidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'}
                     </span>
                   </button>
                 </TooltipTrigger>
-                <TooltipContent 
-                  side="right" 
+                <TooltipContent
+                  side="right"
                   className={`${sidebarOpen && 'lg:hidden'} bg-gray-900 text-white px-3 py-1.5 text-sm rounded-lg shadow-lg border-0`}
                 >
                   {sidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'}
@@ -368,7 +368,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <Link
                           href={item.href}
                           className="flex items-center px-3 py-2.5 rounded-xl transition-all duration-300 group hover:shadow-md hover:scale-[1.02]"
-                          style={{ 
+                          style={{
                             color: clinicSettings.secondaryColor + 'CC',
                             backgroundColor: 'transparent'
                           }}
@@ -392,8 +392,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                           </span>
                         </Link>
                       </TooltipTrigger>
-                      <TooltipContent 
-                        side="right" 
+                      <TooltipContent
+                        side="right"
                         className={`${sidebarOpen && 'lg:hidden'} bg-gray-900 text-white px-3 py-1.5 text-sm rounded-lg shadow-lg border-0`}
                       >
                         {item.label}
@@ -401,13 +401,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </Tooltip>
                   );
                 })}
-                
+
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
                       onClick={handleSignOut}
                       className="flex items-center w-full px-3 py-2.5 rounded-xl transition-all duration-300 group hover:shadow-md hover:scale-[1.02]"
-                      style={{ 
+                      style={{
                         color: clinicSettings.accentColor + 'CC',
                         backgroundColor: 'transparent'
                       }}
@@ -430,8 +430,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       </span>
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent 
-                    side="right" 
+                  <TooltipContent
+                    side="right"
                     className={`${sidebarOpen && 'lg:hidden'} bg-gray-900 text-white px-3 py-1.5 text-sm rounded-lg shadow-lg border-0`}
                   >
                     Sign Out
@@ -442,54 +442,54 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
 
-      {/* Main Content */}
-      <div className="flex-1 lg:pl-0">
-        {/* Top Header */}
-        <header className="bg-white/90 backdrop-blur-sm border-b h-16 shadow-sm relative z-40" style={{ borderColor: clinicSettings.primaryColor + '20' }}>
-          <div className="flex items-center justify-between h-full px-4">
-            <SimpleHamburger
-              isOpen={sidebarOpen}
-              onClick={() => setSidebarOpen(true)}
-              color={clinicSettings.primaryColor}
-              size="md"
-              className="lg:hidden"
-            />
+        {/* Main Content */}
+        <div className="flex-1 lg:pl-0">
+          {/* Top Header */}
+          <header className="bg-white/90 backdrop-blur-sm border-b h-16 shadow-sm relative z-40" style={{ borderColor: clinicSettings.primaryColor + '20' }}>
+            <div className="flex items-center justify-between h-full px-4">
+              <SimpleHamburger
+                isOpen={sidebarOpen}
+                onClick={() => setSidebarOpen(true)}
+                color={clinicSettings.primaryColor}
+                size="md"
+                className="lg:hidden"
+              />
 
-            <div className="flex items-center gap-4 ml-auto">
-              <div 
-                className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-all duration-200 relative z-50"
-                onMouseEnter={handleProfileCardEnter}
-                onMouseLeave={handleProfileCardLeave}
-              >
-                <Avatar className="h-8 w-8" style={{ borderColor: clinicSettings.primaryColor + '30' }}>
-                  <AvatarImage src={session?.user?.image || undefined} />
-                  <AvatarFallback className="text-sm" style={{ backgroundColor: clinicSettings.primaryColor + '20', color: clinicSettings.primaryColor }}>
-                    {getInitials(session?.user?.name || '')}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="hidden md:block">
-                  <div className="font-medium text-sm" style={{ color: clinicSettings.primaryColor }}>{session?.user?.name}</div>
-                  <div className="text-xs capitalize" style={{ color: clinicSettings.primaryColor + 'CC' }}>{session?.user?.role}</div>
-                </div>
-                
-                {/* Profile Card */}
-                <ProfileCard 
-                  isOpen={profileCardOpen}
-                  onClose={() => setProfileCardOpen(false)}
+              <div className="flex items-center gap-4 ml-auto">
+                <div
+                  className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-all duration-200 relative z-50"
                   onMouseEnter={handleProfileCardEnter}
                   onMouseLeave={handleProfileCardLeave}
-                  clinicSettings={clinicSettings}
-                />
+                >
+                  <Avatar className="h-8 w-8" style={{ borderColor: clinicSettings.primaryColor + '30' }}>
+                    <AvatarImage src={session?.user?.image || undefined} />
+                    <AvatarFallback className="text-sm" style={{ backgroundColor: clinicSettings.primaryColor + '20', color: clinicSettings.primaryColor }}>
+                      {getInitials(session?.user?.name || '')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="hidden md:block">
+                    <div className="font-medium text-sm" style={{ color: clinicSettings.primaryColor }}>{session?.user?.name}</div>
+                    <div className="text-xs capitalize" style={{ color: clinicSettings.primaryColor + 'CC' }}>{session?.user?.role}</div>
+                  </div>
+
+                  {/* Profile Card */}
+                  <ProfileCard
+                    isOpen={profileCardOpen}
+                    onClose={() => setProfileCardOpen(false)}
+                    onMouseEnter={handleProfileCardEnter}
+                    onMouseLeave={handleProfileCardLeave}
+                    clinicSettings={clinicSettings}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </header>
+          </header>
 
-        {/* Main Content Area */}
-        <main className="p-6">
-          {children}
-        </main>
-      </div>
+          {/* Main Content Area */}
+          <main className="p-6">
+            {children}
+          </main>
+        </div>
       </div>
     </TooltipProvider>
   );
