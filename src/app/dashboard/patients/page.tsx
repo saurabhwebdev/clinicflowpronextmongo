@@ -61,6 +61,7 @@ interface Patient {
   dateOfBirth: string;
   role: string;
   gender?: 'male' | 'female' | 'other';
+  age?: number | null;
 }
 
 interface ClinicSettings {
@@ -586,10 +587,7 @@ export default function PatientsPage() {
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-gray-400" />
                       <span className="text-sm font-medium text-gray-700">
-                        {(() => {
-                          const age = calculateAge(patient.dateOfBirth);
-                          return age === 'N/A' ? 'N/A' : `${age} years`;
-                        })()}
+                        {patient.age !== null && patient.age !== undefined ? `${patient.age} years` : 'N/A'}
                       </span>
                     </div>
                   </TableCell>

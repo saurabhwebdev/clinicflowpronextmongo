@@ -5,6 +5,24 @@ import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 
+// Helper function to calculate age
+const calculateAge = (dateOfBirth: Date | string | null): number | null => {
+  if (!dateOfBirth) return null;
+  
+  const birthDate = new Date(dateOfBirth);
+  if (isNaN(birthDate.getTime())) return null;
+  
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  
+  return age;
+};
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -32,20 +50,20 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    const patients = await User.find(filter)
+    const patientsData = await User.find(filter)
       .select('firstName lastName email phone dateOfBirth gender role')
       .sort({ firstName: 1, lastName: 1 })
       .skip(skip)
       .limit(limit);
 
-    console.log('Fetched patients with gender field:', patients.map(p => ({ 
-      _id: p._id, 
-      firstName: p.firstName, 
-      lastName: p.lastName, 
-      gender: p.gender,
-      hasGenderField: p.hasOwnProperty('gender'),
-      genderType: typeof p.gender
-    })));
+    // Add age calculation to each patient
+    const patients = patientsData.map(patient => {
+      const age = calculateAge(patient.dateOfBirth);
+      return {
+        ...patient.toObject(),
+        age
+      };
+    });
 
     const total = await User.countDocuments(filter);
 
