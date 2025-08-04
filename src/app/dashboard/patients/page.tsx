@@ -38,14 +38,14 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { 
-  Plus, 
-  Users, 
-  Mail, 
-  Phone, 
-  Calendar, 
-  Eye, 
-  Trash2, 
+import {
+  Plus,
+  Users,
+  Mail,
+  Phone,
+  Calendar,
+  Eye,
+  Trash2,
   Search,
   Filter,
   UserPlus,
@@ -117,7 +117,7 @@ export default function PatientsPage() {
 
   const fetchClinicSettings = async () => {
     try {
-              // Fetch clinic settings (now properly handles patients by fetching master admin settings)
+      // Fetch clinic settings (now properly handles patients by fetching master admin settings)
       const response = await fetch('/api/clinic-settings');
       if (response.ok) {
         const data = await response.json();
@@ -142,22 +142,22 @@ export default function PatientsPage() {
     setIsLoading(true);
     try {
       const patientData = { ...formData };
-      
+
       if (patientData.dateOfBirth) {
         console.log("Submitting patient with date:", patientData.dateOfBirth);
       }
-      
+
       const response = await fetch("/api/patients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(patientData),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to create patient");
       }
-      
+
       setIsAddDialogOpen(false);
       setFormData({
         firstName: "",
@@ -179,14 +179,14 @@ export default function PatientsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this patient?")) return;
-    
+
     try {
       const response = await fetch(`/api/patients/${id}`, {
         method: "DELETE",
       });
-      
+
       if (!response.ok) throw new Error("Failed to delete patient");
-      
+
       toast.success("Patient deleted successfully");
       fetchPatients();
     } catch (error) {
@@ -197,24 +197,24 @@ export default function PatientsPage() {
   const handleEditGender = async (patientId: string, gender: 'male' | 'female' | 'other') => {
     try {
       console.log('Updating gender for patient:', patientId, 'to:', gender);
-      
+
       const response = await fetch(`/api/patients/${patientId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ gender }),
       });
-      
+
       console.log('Response status:', response.status);
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error response:', errorData);
         throw new Error(errorData.error || "Failed to update patient gender");
       }
-      
+
       const updatedPatient = await response.json();
       console.log('Updated patient:', updatedPatient);
-      
+
       toast.success("Patient gender updated successfully");
       setIsEditGenderDialogOpen(false);
       setEditingPatient(null);
@@ -226,46 +226,48 @@ export default function PatientsPage() {
   };
 
   // Calculate age from date of birth
-  const calculateAge = (dateOfBirth: string) => {
-    console.log('Calculating age for dateOfBirth:', dateOfBirth, 'Type:', typeof dateOfBirth);
-    
+  const calculateAge = (dateOfBirth: string | Date) => {
     if (!dateOfBirth) {
-      console.log('No dateOfBirth provided');
       return 'N/A';
     }
-    
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    
-    console.log('Birth date object:', birthDate);
-    console.log('Birth date valid:', !isNaN(birthDate.getTime()));
-    
-    // Check if the date is valid
-    if (isNaN(birthDate.getTime())) {
-      console.log('Invalid date format');
+
+    try {
+      const today = new Date();
+      const birthDate = new Date(dateOfBirth);
+
+      // Check if the date is valid
+      if (isNaN(birthDate.getTime())) {
+        return 'N/A';
+      }
+
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      // Ensure age is reasonable (between 0 and 150)
+      if (age < 0 || age > 150) {
+        return 'N/A';
+      }
+
+      return age;
+    } catch (error) {
+      console.error('Error calculating age:', error);
       return 'N/A';
     }
-    
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    
-    console.log('Calculated age:', age);
-    return age;
   };
 
   // Filter patients based on search and filter
   const filteredPatients = patients.filter(patient => {
-    const matchesSearch = 
+    const matchesSearch =
       patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       patient.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       patient.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesFilter = filterRole === "all" || patient.role === filterRole;
-    
+
     return matchesSearch && matchesFilter;
   });
 
@@ -279,14 +281,14 @@ export default function PatientsPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
-            <div className="p-3 rounded-2xl" style={{ 
+            <div className="p-3 rounded-2xl" style={{
               backgroundColor: primaryColor + '15',
               boxShadow: `0 4px 12px ${primaryColor}30`
             }}>
               <Users className="h-8 w-8" style={{ color: primaryColor }} />
             </div>
             <div>
-              <h1 className="text-4xl font-bold" style={{ 
+              <h1 className="text-4xl font-bold" style={{
                 backgroundImage: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -297,12 +299,12 @@ export default function PatientsPage() {
               <p className="text-gray-600 mt-1">Manage your patient records and information</p>
             </div>
           </div>
-          
+
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <button 
+              <button
                 className="flex items-center space-x-2 px-6 py-3 rounded-xl text-sm font-medium text-white transition-all duration-200 hover:scale-105"
-                style={{ 
+                style={{
                   backgroundColor: primaryColor,
                   boxShadow: `0 4px 12px ${primaryColor}40`
                 }}
@@ -331,8 +333,8 @@ export default function PatientsPage() {
                         }
                         required
                         className="border-0 bg-white/80 rounded-xl shadow-sm focus:ring-2 focus:ring-offset-0 transition-all duration-200"
-                        style={{ 
-                          '--tw-ring-color': primaryColor 
+                        style={{
+                          '--tw-ring-color': primaryColor
                         } as React.CSSProperties}
                       />
                     </div>
@@ -346,8 +348,8 @@ export default function PatientsPage() {
                         }
                         required
                         className="border-0 bg-white/80 rounded-xl shadow-sm focus:ring-2 focus:ring-offset-0 transition-all duration-200"
-                        style={{ 
-                          '--tw-ring-color': primaryColor 
+                        style={{
+                          '--tw-ring-color': primaryColor
                         } as React.CSSProperties}
                       />
                     </div>
@@ -363,8 +365,8 @@ export default function PatientsPage() {
                       }
                       required
                       className="border-0 bg-white/80 rounded-xl shadow-sm focus:ring-2 focus:ring-offset-0 transition-all duration-200"
-                      style={{ 
-                        '--tw-ring-color': primaryColor 
+                      style={{
+                        '--tw-ring-color': primaryColor
                       } as React.CSSProperties}
                     />
                   </div>
@@ -377,8 +379,8 @@ export default function PatientsPage() {
                         setFormData({ ...formData, phone: e.target.value })
                       }
                       className="border-0 bg-white/80 rounded-xl shadow-sm focus:ring-2 focus:ring-offset-0 transition-all duration-200"
-                      style={{ 
-                        '--tw-ring-color': primaryColor 
+                      style={{
+                        '--tw-ring-color': primaryColor
                       } as React.CSSProperties}
                     />
                   </div>
@@ -393,15 +395,15 @@ export default function PatientsPage() {
                       }
                       required
                       className="border-0 bg-white/80 rounded-xl shadow-sm focus:ring-2 focus:ring-offset-0 transition-all duration-200"
-                      style={{ 
-                        '--tw-ring-color': primaryColor 
+                      style={{
+                        '--tw-ring-color': primaryColor
                       } as React.CSSProperties}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="gender" className="text-sm font-semibold text-gray-700">Gender</Label>
-                    <Select 
-                      value={formData.gender} 
+                    <Select
+                      value={formData.gender}
                       onValueChange={(value) => setFormData({ ...formData, gender: value as 'male' | 'female' | 'other' })}
                     >
                       <SelectTrigger className="border-0 bg-white/80 rounded-xl shadow-sm focus:ring-2 focus:ring-offset-0 transition-all duration-200">
@@ -416,11 +418,11 @@ export default function PatientsPage() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     disabled={isLoading}
                     className="px-6 py-3 rounded-xl text-sm font-medium text-white transition-all duration-200 hover:scale-105 disabled:opacity-50"
-                    style={{ 
+                    style={{
                       backgroundColor: primaryColor,
                       boxShadow: `0 4px 12px ${primaryColor}40`
                     }}
@@ -436,7 +438,7 @@ export default function PatientsPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="group flex items-center space-x-4 p-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/20 hover:shadow-lg transition-all duration-300 hover:scale-105">
-            <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110" style={{ 
+            <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110" style={{
               backgroundColor: primaryColor + '15',
               boxShadow: `0 4px 12px ${primaryColor}30`
             }}>
@@ -447,9 +449,9 @@ export default function PatientsPage() {
               <p className="text-2xl font-bold text-gray-800">{patients.length}</p>
             </div>
           </div>
-          
+
           <div className="group flex items-center space-x-4 p-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/20 hover:shadow-lg transition-all duration-300 hover:scale-105">
-            <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110" style={{ 
+            <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110" style={{
               backgroundColor: secondaryColor + '15',
               boxShadow: `0 4px 12px ${secondaryColor}30`
             }}>
@@ -460,9 +462,9 @@ export default function PatientsPage() {
               <p className="text-2xl font-bold text-gray-800">{patients.filter(p => p.email).length}</p>
             </div>
           </div>
-          
+
           <div className="group flex items-center space-x-4 p-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/20 hover:shadow-lg transition-all duration-300 hover:scale-105">
-            <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110" style={{ 
+            <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110" style={{
               backgroundColor: accentColor + '15',
               boxShadow: `0 4px 12px ${accentColor}30`
             }}>
@@ -473,9 +475,9 @@ export default function PatientsPage() {
               <p className="text-2xl font-bold text-gray-800">{patients.filter(p => p.phone).length}</p>
             </div>
           </div>
-          
+
           <div className="group flex items-center space-x-4 p-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/20 hover:shadow-lg transition-all duration-300 hover:scale-105">
-            <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110" style={{ 
+            <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110" style={{
               backgroundColor: '#f59e0b15',
               boxShadow: '0 4px 12px #f59e0b30'
             }}>
@@ -503,8 +505,8 @@ export default function PatientsPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 border-0 bg-white/80 rounded-xl shadow-sm focus:ring-2 focus:ring-offset-0 transition-all duration-200"
-              style={{ 
-                '--tw-ring-color': primaryColor 
+              style={{
+                '--tw-ring-color': primaryColor
               } as React.CSSProperties}
             />
           </div>
@@ -533,7 +535,7 @@ export default function PatientsPage() {
             Showing {filteredPatients.length} of {patients.length} patients
           </p>
         </div>
-        
+
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -551,7 +553,7 @@ export default function PatientsPage() {
                 <TableRow key={patient._id} className="hover:bg-white/50 transition-all duration-200 border-b border-white/20">
                   <TableCell>
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ 
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{
                         backgroundColor: primaryColor + '15'
                       }}>
                         <span className="text-sm font-semibold" style={{ color: primaryColor }}>
@@ -584,16 +586,19 @@ export default function PatientsPage() {
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-gray-400" />
                       <span className="text-sm font-medium text-gray-700">
-                        {calculateAge(patient.dateOfBirth) === 'N/A' ? 'N/A' : `${calculateAge(patient.dateOfBirth)} years`}
+                        {(() => {
+                          const age = calculateAge(patient.dateOfBirth);
+                          return age === 'N/A' ? 'N/A' : `${age} years`;
+                        })()}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
-                      <Badge 
-                        variant="secondary" 
+                      <Badge
+                        variant="secondary"
                         className="capitalize cursor-pointer hover:opacity-80 transition-all duration-200"
-                        style={{ 
+                        style={{
                           backgroundColor: patient.gender ? (patient.gender === 'male' ? '#3b82f6' : patient.gender === 'female' ? '#ec4899' : '#8b5cf6') + '15' : '#6b7280' + '15',
                           color: patient.gender ? (patient.gender === 'male' ? '#3b82f6' : patient.gender === 'female' ? '#ec4899' : '#8b5cf6') : '#6b7280'
                         }}
@@ -617,10 +622,10 @@ export default function PatientsPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge 
-                      variant="secondary" 
+                    <Badge
+                      variant="secondary"
                       className="capitalize"
-                      style={{ 
+                      style={{
                         backgroundColor: accentColor + '15',
                         color: accentColor
                       }}
@@ -651,13 +656,13 @@ export default function PatientsPage() {
             </TableBody>
           </Table>
         </div>
-        
+
         {filteredPatients.length === 0 && (
           <div className="p-12 text-center">
             <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-600 mb-2">No patients found</h3>
             <p className="text-gray-500">
-              {searchTerm || filterRole !== "all" 
+              {searchTerm || filterRole !== "all"
                 ? "Try adjusting your search or filter criteria"
                 : "Get started by adding your first patient"
               }
