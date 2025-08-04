@@ -136,6 +136,8 @@ export default function PatientDetailPage({ params }: { params: Usable<{ id: str
       const response = await fetch(`/api/patients/${patientId}`);
       if (!response.ok) throw new Error("Failed to fetch patient");
       const data = await response.json();
+      console.log('Individual patient page - Fetched patient data:', data);
+      console.log('Individual patient page - Patient dateOfBirth:', data.dateOfBirth);
       setPatient(data);
     } catch (error) {
       toast.error("Failed to fetch patient details");
@@ -275,15 +277,22 @@ export default function PatientDetailPage({ params }: { params: Usable<{ id: str
 
   // Calculate age from date of birth
   const calculateAge = (dateOfBirth: string) => {
+    console.log('Individual patient page - Calculating age for dateOfBirth:', dateOfBirth, 'Type:', typeof dateOfBirth);
+    
     if (!dateOfBirth) {
+      console.log('Individual patient page - No dateOfBirth provided');
       return 'N/A';
     }
     
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
     
+    console.log('Individual patient page - Birth date object:', birthDate);
+    console.log('Individual patient page - Birth date valid:', !isNaN(birthDate.getTime()));
+    
     // Check if the date is valid
     if (isNaN(birthDate.getTime())) {
+      console.log('Individual patient page - Invalid date format');
       return 'N/A';
     }
     
@@ -294,6 +303,7 @@ export default function PatientDetailPage({ params }: { params: Usable<{ id: str
       age--;
     }
     
+    console.log('Individual patient page - Calculated age:', age);
     return age;
   };
 

@@ -98,14 +98,20 @@ export default function PatientsPage() {
 
   const fetchPatients = async () => {
     try {
-      const response = await fetch("/api/patients");
-      if (!response.ok) throw new Error("Failed to fetch patients");
-      const data = await response.json();
-      console.log("Fetched patients data:", data);
-      setPatients(data.patients || []);
+      setIsLoading(true);
+      const response = await fetch('/api/patients');
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Fetched patients data:', data.patients);
+        console.log('Sample patient dateOfBirth:', data.patients[0]?.dateOfBirth);
+        setPatients(data.patients);
+      } else {
+        console.error('Failed to fetch patients');
+      }
     } catch (error) {
-      console.error("Error fetching patients:", error);
-      toast.error("Failed to fetch patients");
+      console.error('Error fetching patients:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -221,15 +227,22 @@ export default function PatientsPage() {
 
   // Calculate age from date of birth
   const calculateAge = (dateOfBirth: string) => {
+    console.log('Calculating age for dateOfBirth:', dateOfBirth, 'Type:', typeof dateOfBirth);
+    
     if (!dateOfBirth) {
+      console.log('No dateOfBirth provided');
       return 'N/A';
     }
     
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
     
+    console.log('Birth date object:', birthDate);
+    console.log('Birth date valid:', !isNaN(birthDate.getTime()));
+    
     // Check if the date is valid
     if (isNaN(birthDate.getTime())) {
+      console.log('Invalid date format');
       return 'N/A';
     }
     
@@ -240,6 +253,7 @@ export default function PatientsPage() {
       age--;
     }
     
+    console.log('Calculated age:', age);
     return age;
   };
 
