@@ -74,15 +74,46 @@ interface AdminStats {
   };
 }
 
+interface DoctorStats {
+  appointments: {
+    today: number;
+    total: number;
+    completed: number;
+    change: string;
+    changeType: string;
+  };
+  patients: {
+    total: number;
+    seenToday: number;
+    change: string;
+    changeType: string;
+  };
+  prescriptions: {
+    total: number;
+    today: number;
+    change: string;
+    changeType: string;
+  };
+  revenue: {
+    monthly: number;
+    bills: number;
+  };
+  ehrs: {
+    total: number;
+  };
+}
+
 export default function Dashboard() {
   const { data: session } = useSession();
   const { settings } = useClinicSettings();
   const [systemHealth, setSystemHealth] = useState<SystemHealth | null>(null);
   const [systemUptime, setSystemUptime] = useState<SystemUptime | null>(null);
   const [adminStats, setAdminStats] = useState<AdminStats | null>(null);
+  const [doctorStats, setDoctorStats] = useState<DoctorStats | null>(null);
   const [isLoadingHealth, setIsLoadingHealth] = useState(false);
   const [isLoadingUptime, setIsLoadingUptime] = useState(false);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
+  const [isLoadingDoctorStats, setIsLoadingDoctorStats] = useState(false);
 
   // Get currency symbol from settings
   const symbol = settings?.currency === 'USD' ? '$' : settings?.currency === 'EUR' ? '€' : '$';
@@ -164,6 +195,28 @@ export default function Dashboard() {
     };
 
     fetchAdminStats();
+  }, [session?.user?.role]);
+
+  // Fetch doctor stats for doctor role
+  useEffect(() => {
+    const fetchDoctorStats = async () => {
+      if (session?.user?.role === 'doctor') {
+        try {
+          setIsLoadingDoctorStats(true);
+          const response = await fetch('/api/doctor/stats');
+          if (response.ok) {
+            const data = await response.json();
+            setDoctorStats(data.data);
+          }
+        } catch (error) {
+          console.error('Error fetching doctor stats:', error);
+        } finally {
+          setIsLoadingDoctorStats(false);
+        }
+      }
+    };
+
+    fetchDoctorStats();
   }, [session?.user?.role]);
 
   // Set up polling for real-time updates
@@ -275,27 +328,39 @@ export default function Dashboard() {
         return [
           {
             title: "Today's Appointments",
-            value: "12",
-            change: "+3",
-            changeType: "positive",
+            value: doctorStats?.appointments?.today?.toString() || "Loading...",
+            change: doctorStats?.appointments?.change || "0",
+            changeType: doctorStats?.appointments?.changeType || "neutral",
             icon: <Calendar className="h-4 w-4" />,
-            description: "Scheduled appointments"
+            description: "Scheduled appointments",
+            isLoading: isLoadingDoctorStats
           },
           {
             title: "Patients Seen",
-            value: "8",
-            change: "+2",
-            changeType: "positive",
+            value: doctorStats?.patients?.seenToday?.toString() || "Loading...",
+            change: doctorStats?.patients?.change || "0",
+            changeType: doctorStats?.patients?.changeType || "neutral",
             icon: <Stethoscope className="h-4 w-4" />,
-            description: "Patients treated today"
+            description: "Patients treated today",
+            isLoading: isLoadingDoctorStats
           },
           {
             title: "Prescriptions",
-            value: "15",
-            change: "+5",
-            changeType: "positive",
+            value: doctorStats?.prescriptions?.today?.toString() || "Loading...",
+            change: doctorStats?.prescriptions?.change || "0",
+            changeType: doctorStats?.prescriptions?.changeType || "neutral",
             icon: <Pill className="h-4 w-4" />,
-            description: "Prescriptions issued"
+            description: "Prescriptions issued today",
+            isLoading: isLoadingDoctorStats
+          },
+          {
+            title: "Total Patients",
+            value: doctorStats?.patients?.total?.toString() || "Loading...",
+            change: "+0",
+            changeType: "neutral",
+            icon: <Users className="h-4 w-4" />,
+            description: "Total patients in your care",
+            isLoading: isLoadingDoctorStats
           }
         ];
       
@@ -643,6 +708,80 @@ export default function Dashboard() {
                   <div className="flex justify-between">
                     <span>Environment:</span>
                     <span className="font-medium">{systemUptime?.environment || 'Unknown'}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Doctor-specific content */}
+      {session.user.role === 'doctor' && doctorStats && (
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Practice Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Appointment Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Today's Appointments:</span>
+                    <span className="font-medium">{doctorStats.appointments.today}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Completed Today:</span>
+                    <span className="font-medium">{doctorStats.appointments.completed}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Total Appointments:</span>
+                    <span className="font-medium">{doctorStats.appointments.total}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Patient Care</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Total Patients:</span>
+                    <span className="font-medium">{doctorStats.patients.total}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Patients Seen Today:</span>
+                    <span className="font-medium">{doctorStats.patients.seenToday}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Total EHRs:</span>
+                    <span className="font-medium">{doctorStats.ehrs.total}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Revenue & Prescriptions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Monthly Revenue:</span>
+                    <span className="font-medium">{symbol}{doctorStats.revenue.monthly.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Total Bills:</span>
+                    <span className="font-medium">{doctorStats.revenue.bills}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Prescriptions Today:</span>
+                    <span className="font-medium">{doctorStats.prescriptions.today}</span>
                   </div>
                 </div>
               </CardContent>
