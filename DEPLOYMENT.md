@@ -18,7 +18,7 @@ In your Vercel project dashboard, go to Settings > Environment Variables and add
 
 | Variable Name | Value | Environment |
 |---------------|-------|-------------|
-| `MONGODB_URI` | `mongodb+srv://iamsaurabhthakur29:qyZkotKZVUuE6Tu7@cluster0.l69za6n.mongodb.net/docudocflask?retryWrites=true&w=majority&appName=Cluster0` | Production, Preview, Development |
+| `MONGODB_URI` | `mongodb+srv://iamsaurabhthakur29:qyZkotKZVUuE6Tu7@cluster0.l69za6n.mongodb.net/clinicflow?retryWrites=true&w=majority&appName=Cluster0` | Production, Preview, Development |
 | `NEXTAUTH_URL` | `https://your-app-name.vercel.app` | Production, Preview |
 | `NEXTAUTH_SECRET` | `clinicflow-super-secret-key-2024-production-ready` | Production, Preview, Development |
 | `GMAIL_USER` | `worlddj0@gmail.com` | Production, Preview, Development |
@@ -44,7 +44,7 @@ After deployment, you'll need to create the first admin user. You can do this by
 
 ### Database Configuration
 - MongoDB Atlas is already configured
-- Database name: `docudocflask`
+- Database name: `clinicflow`
 - Connection string includes retry writes and majority write concern for production reliability
 
 ### Security Notes
