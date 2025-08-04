@@ -26,10 +26,10 @@ export function ProfileCard({ isOpen, onClose, clinicSettings }: ProfileCardProp
   const getInitials = (name: string) => {
     return name
       ? name
-          .split(' ')
-          .map(part => part[0])
-          .join('')
-          .toUpperCase()
+        .split(' ')
+        .map(part => part[0])
+        .join('')
+        .toUpperCase()
       : 'U';
   };
 
@@ -59,10 +59,10 @@ export function ProfileCard({ isOpen, onClose, clinicSettings }: ProfileCardProp
             </Avatar>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 text-lg">{session?.user?.name}</h3>
-              <Badge 
-                variant="secondary" 
+              <Badge
+                variant="secondary"
                 className="capitalize mt-1"
-                style={{ 
+                style={{
                   backgroundColor: clinicSettings.primaryColor + '15',
                   color: clinicSettings.primaryColor
                 }}
@@ -72,7 +72,7 @@ export function ProfileCard({ isOpen, onClose, clinicSettings }: ProfileCardProp
             </div>
           </div>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           {/* User Info */}
           <div className="space-y-3">
@@ -100,7 +100,7 @@ export function ProfileCard({ isOpen, onClose, clinicSettings }: ProfileCardProp
               variant="ghost"
               className="w-full justify-start text-sm"
               onClick={handleProfileClick}
-              style={{ 
+              style={{
                 color: clinicSettings.primaryColor,
                 backgroundColor: 'transparent'
               }}
@@ -114,12 +114,12 @@ export function ProfileCard({ isOpen, onClose, clinicSettings }: ProfileCardProp
               <User className="h-4 w-4 mr-3" />
               View Profile
             </Button>
-            
+
             <Button
               variant="ghost"
               className="w-full justify-start text-sm"
               onClick={() => router.push('/dashboard/settings')}
-              style={{ 
+              style={{
                 color: clinicSettings.secondaryColor,
                 backgroundColor: 'transparent'
               }}
@@ -133,12 +133,12 @@ export function ProfileCard({ isOpen, onClose, clinicSettings }: ProfileCardProp
               <Settings className="h-4 w-4 mr-3" />
               Settings
             </Button>
-            
+
             <Button
               variant="ghost"
               className="w-full justify-start text-sm"
               onClick={handleSignOut}
-              style={{ 
+              style={{
                 color: clinicSettings.accentColor,
                 backgroundColor: 'transparent'
               }}
