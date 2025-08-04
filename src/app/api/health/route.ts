@@ -12,7 +12,7 @@ export async function GET() {
             database: 'connected',
             environment: process.env.NODE_ENV || 'development'
         });
-    } catch (error) {
+    } catch {
         return NextResponse.json({
             status: 'unhealthy',
             timestamp: new Date().toISOString(),
