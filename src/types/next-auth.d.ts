@@ -13,6 +13,9 @@ declare module "next-auth" {
       currency?: string;
       clinicName?: string;
       clinicProfile?: string;
+      dateOfBirth?: string;
+      age?: number | null;
+      gender?: string;
       requirePasswordChange?: boolean;
     } & DefaultSession["user"];
   }
@@ -27,6 +30,9 @@ declare module "next-auth" {
     currency?: string;
     clinicName?: string;
     clinicProfile?: string;
+    dateOfBirth?: string;
+    age?: number | null;
+    gender?: string;
     requirePasswordChange?: boolean;
     createdBy?: string;
   }
@@ -43,6 +49,9 @@ declare module "next-auth/jwt" {
     currency?: string;
     clinicName?: string;
     clinicProfile?: string;
+    dateOfBirth?: string;
+    age?: number | null;
+    gender?: string;
     requirePasswordChange?: boolean;
     createdBy?: string;
   }

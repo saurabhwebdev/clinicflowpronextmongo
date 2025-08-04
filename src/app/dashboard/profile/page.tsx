@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-import { User, Mail, Phone, MapPin, Globe, CreditCard, Building, Edit, Save, X } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Globe, CreditCard, Building, Edit, Save, X, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import { getSupportedCurrencies } from '@/lib/currency';
 
@@ -24,6 +24,9 @@ interface UserProfile {
   currency: string;
   clinicName: string;
   clinicProfile: string;
+  dateOfBirth?: string;
+  age?: number | null;
+  gender?: string;
 }
 
 interface ClinicSettings {
@@ -100,7 +103,10 @@ export default function ProfilePage() {
               country: session.user.country || '',
               currency: session.user.currency || 'USD',
               clinicName: session.user.clinicName || '',
-              clinicProfile: session.user.clinicProfile || ''
+              clinicProfile: session.user.clinicProfile || '',
+              dateOfBirth: session.user.dateOfBirth || '',
+              age: session.user.age || null,
+              gender: session.user.gender || ''
             });
           }
         } catch (error) {
@@ -116,7 +122,10 @@ export default function ProfilePage() {
             country: session.user.country || '',
             currency: session.user.currency || 'USD',
             clinicName: session.user.clinicName || '',
-            clinicProfile: session.user.clinicProfile || ''
+            clinicProfile: session.user.clinicProfile || '',
+            dateOfBirth: session.user.dateOfBirth || '',
+            age: session.user.age || null,
+            gender: session.user.gender || ''
           });
         } finally {
           setLoading(false);
@@ -238,7 +247,9 @@ export default function ProfilePage() {
                   onClick={() => startEditing('personal', {
                     firstName: profile.firstName,
                     lastName: profile.lastName,
-                    phone: profile.phone
+                    phone: profile.phone,
+                    dateOfBirth: profile.dateOfBirth,
+                    gender: profile.gender
                   })}
                   style={{ color: clinicSettings.primaryColor }}
                 >
@@ -295,6 +306,46 @@ export default function ProfilePage() {
                         '--tw-ring-color': clinicSettings.primaryColor 
                       } as React.CSSProperties}
                     />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="dateOfBirth" style={{ color: clinicSettings.textColor }}>Date of Birth</Label>
+                      <Input
+                        id="dateOfBirth"
+                        type="date"
+                        value={tempValues.personal?.dateOfBirth ? new Date(tempValues.personal.dateOfBirth).toISOString().split('T')[0] : ''}
+                        onChange={(e) => setTempValues(prev => ({
+                          ...prev,
+                          personal: { ...prev.personal, dateOfBirth: e.target.value }
+                        }))}
+                        style={{ 
+                          borderColor: clinicSettings.primaryColor,
+                          '--tw-ring-color': clinicSettings.primaryColor 
+                        } as React.CSSProperties}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="gender" style={{ color: clinicSettings.textColor }}>Gender</Label>
+                      <Select
+                        value={tempValues.personal?.gender || ''}
+                        onValueChange={(value) => setTempValues(prev => ({
+                          ...prev,
+                          personal: { ...prev.personal, gender: value }
+                        }))}
+                      >
+                        <SelectTrigger style={{ 
+                          borderColor: clinicSettings.primaryColor,
+                          '--tw-ring-color': clinicSettings.primaryColor 
+                        } as React.CSSProperties}>
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   <div className="flex gap-2">
                     <Button
@@ -366,6 +417,35 @@ export default function ProfilePage() {
                       <p className="font-medium" style={{ color: clinicSettings.textColor }}>{profile.phone || 'Not provided'}</p>
                     </div>
                   </div>
+
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-full" style={{ backgroundColor: `${clinicSettings.primaryColor}20` }}>
+                      <Calendar className="h-6 w-6" style={{ color: clinicSettings.primaryColor }} />
+                    </div>
+                    <div>
+                      <p className="text-sm" style={{ color: clinicSettings.textColor }}>Date of Birth</p>
+                      <p className="font-medium" style={{ color: clinicSettings.textColor }}>
+                        {profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : 'Not provided'}
+                      </p>
+                      {profile.age !== null && profile.age !== undefined && (
+                        <p className="text-xs" style={{ color: clinicSettings.textColor }}>
+                          Age: {profile.age} years
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {profile.gender && (
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 rounded-full" style={{ backgroundColor: `${clinicSettings.primaryColor}20` }}>
+                        <User className="h-6 w-6" style={{ color: clinicSettings.primaryColor }} />
+                      </div>
+                      <div>
+                        <p className="text-sm" style={{ color: clinicSettings.textColor }}>Gender</p>
+                        <p className="font-medium capitalize" style={{ color: clinicSettings.textColor }}>{profile.gender}</p>
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </CardContent>

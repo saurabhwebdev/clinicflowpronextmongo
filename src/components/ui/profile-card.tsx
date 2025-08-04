@@ -21,6 +21,24 @@ interface ProfileCardProps {
   };
 }
 
+// Helper function to calculate age
+const calculateAge = (dateOfBirth: string | null): number | null => {
+  if (!dateOfBirth) return null;
+  
+  const birthDate = new Date(dateOfBirth);
+  if (isNaN(birthDate.getTime())) return null;
+  
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  
+  return age;
+};
+
 export function ProfileCard({ isOpen, onClose, onMouseEnter, onMouseLeave, clinicSettings }: ProfileCardProps) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -95,7 +113,12 @@ export function ProfileCard({ isOpen, onClose, onMouseEnter, onMouseLeave, clini
             {session?.user?.dateOfBirth && (
               <div className="flex items-center space-x-3 text-sm text-gray-600">
                 <Calendar className="h-4 w-4" style={{ color: clinicSettings.primaryColor }} />
-                <span>{new Date(session.user.dateOfBirth).toLocaleDateString()}</span>
+                <div>
+                  <span>{new Date(session.user.dateOfBirth).toLocaleDateString()}</span>
+                  {session.user.age !== null && session.user.age !== undefined && (
+                    <span className="ml-2 text-xs text-gray-500">({session.user.age} years)</span>
+                  )}
+                </div>
               </div>
             )}
           </div>
