@@ -1,12 +1,25 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Home, FileSearch } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft, Home, Search, AlertTriangle } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import Lottie from 'lottie-react';
+import { useClinicSettings } from '@/hooks/use-clinic-settings';
 
 export default function DashboardNotFound() {
+  const [animationData, setAnimationData] = useState(null);
+  const { settings, loading } = useClinicSettings();
+  
+  // Load animation data
+  useEffect(() => {
+    fetch('/animation/Error 404.json')
+      .then(response => response.json())
+      .then(data => setAnimationData(data))
+      .catch(error => console.error('Error loading animation:', error));
+  }, []);
+
   // Add some subtle animation when the page loads
   useEffect(() => {
     const element = document.getElementById('dashboard-not-found-container');
@@ -16,45 +29,134 @@ export default function DashboardNotFound() {
     }
   }, []);
 
+  // Default colors if settings are not loaded yet
+  const primaryColor = settings?.primaryColor || '#3b82f6';
+  const secondaryColor = settings?.secondaryColor || '#1e40af';
+  const accentColor = settings?.accentColor || '#10b981';
+  const backgroundColor = settings?.backgroundColor || '#ffffff';
+  const textColor = settings?.textColor || '#1f2937';
+
   return (
-    <div className="p-6">
-      <Card className="max-w-3xl mx-auto">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold">404 - Page Not Found</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div 
-            id="dashboard-not-found-container"
-            className="flex flex-col items-center justify-center transition-all duration-500 ease-out opacity-0 transform translate-y-4"
-          >
-            <div className="mb-8 text-center">
-              <div className="flex justify-center mb-6">
-                <FileSearch className="h-32 w-32 text-gray-300" />
+    <div className="min-h-screen flex items-center justify-center p-6" 
+         style={{ backgroundColor: backgroundColor }}>
+      <div className="w-full max-w-4xl">
+        <Card className="overflow-hidden border-0 shadow-2xl" 
+              style={{ backgroundColor: backgroundColor }}>
+          <CardContent className="p-0">
+            <div 
+              id="dashboard-not-found-container"
+              className="flex flex-col lg:flex-row items-center justify-center transition-all duration-700 ease-out opacity-0 transform translate-y-8"
+            >
+              {/* Left Side - Animation */}
+              <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col items-center justify-center">
+                <div className="relative">
+                  {/* Background decorative elements */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-96 h-96 rounded-full opacity-5"
+                         style={{ backgroundColor: primaryColor }}></div>
+                  </div>
+                  
+                  {/* Animation Container */}
+                  <div className="relative w-80 h-80">
+                    {animationData ? (
+                      <Lottie 
+                        animationData={animationData} 
+                        loop={true}
+                        autoplay={true}
+                        style={{ width: '100%', height: '100%' }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <div className="text-center">
+                          <AlertTriangle className="w-32 h-32 mx-auto mb-4" 
+                                       style={{ color: primaryColor }} />
+                          <div className="text-6xl font-black" 
+                               style={{ color: primaryColor }}>404</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-              <h2 className="text-xl font-medium text-gray-700 mb-4">
-                We couldn't find the page you're looking for
-              </h2>
-              <p className="text-gray-500 max-w-md mx-auto">
-                The page you requested could not be found. It might have been moved, deleted, or never existed.
-              </p>
+
+              {/* Right Side - Content */}
+              <div className="w-full lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
+                <div className="text-center lg:text-left">
+                  {/* Error Code */}
+                  <div className="mb-6">
+                    <div className="text-8xl font-black mb-2 tracking-tighter"
+                         style={{ color: primaryColor }}>404</div>
+                    <div className="text-sm font-medium uppercase tracking-widest"
+                         style={{ color: secondaryColor }}>Page Not Found</div>
+                  </div>
+
+                  {/* Main Message */}
+                  <div className="mb-8">
+                    <h1 className="text-3xl lg:text-4xl font-bold mb-4"
+                        style={{ color: textColor }}>
+                      Oops! We're lost in space
+                    </h1>
+                    <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                      The page you're looking for seems to have floated away into the digital cosmos. 
+                      Don't worry, we'll help you navigate back to familiar territory.
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <Button 
+                      variant="outline" 
+                      className="gap-2 group transition-all duration-300 hover:scale-105"
+                      onClick={() => window.history.back()}
+                      style={{ 
+                        borderColor: primaryColor,
+                        color: primaryColor
+                      }}
+                    >
+                      <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                      Go Back
+                    </Button>
+                    
+                    <Button 
+                      asChild 
+                      className="gap-2 group transition-all duration-300 hover:scale-105 shadow-lg"
+                      style={{ 
+                        backgroundColor: primaryColor,
+                        borderColor: primaryColor
+                      }}
+                    >
+                      <Link href="/dashboard">
+                        <Home className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                        Dashboard Home
+                      </Link>
+                    </Button>
+                  </div>
+
+                  {/* Additional Help */}
+                  <div className="mt-8 p-4 rounded-lg border border-gray-200 bg-gray-50">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Search className="h-4 w-4" style={{ color: accentColor }} />
+                      <span className="font-medium" style={{ color: textColor }}>
+                        Need help finding something?
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Try using the search function or check our navigation menu to find what you're looking for.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button variant="outline" className="gap-2" onClick={() => window.history.back()}>
-                <ArrowLeft className="h-4 w-4" />
-                Go Back
-              </Button>
-              
-              <Button asChild className="gap-2">
-                <Link href="/dashboard">
-                  <Home className="h-4 w-4" />
-                  Dashboard Home
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-sm text-gray-500">
+            &copy; {new Date().getFullYear()} {settings?.clinicName || 'ClinicFlow Pro'}. All rights reserved.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
