@@ -115,8 +115,21 @@ export default function Dashboard() {
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [isLoadingDoctorStats, setIsLoadingDoctorStats] = useState(false);
 
-  // Get currency symbol from settings
-  const symbol = settings?.currency === 'USD' ? '$' : settings?.currency === 'EUR' ? '€' : '$';
+  // Get currency symbol from user's currency or clinic settings
+  const getUserCurrencySymbol = () => {
+    const userCurrency = session?.user?.currency || settings?.currency || 'USD';
+    switch (userCurrency) {
+      case 'USD': return '$';
+      case 'EUR': return '€';
+      case 'GBP': return '£';
+      case 'INR': return '₹';
+      case 'CAD': return 'C$';
+      case 'AUD': return 'A$';
+      default: return '$';
+    }
+  };
+
+  const symbol = getUserCurrencySymbol();
 
   // Fetch clinic settings
   useEffect(() => {
