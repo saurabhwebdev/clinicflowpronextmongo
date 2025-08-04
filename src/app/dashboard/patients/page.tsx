@@ -221,8 +221,18 @@ export default function PatientsPage() {
 
   // Calculate age from date of birth
   const calculateAge = (dateOfBirth: string) => {
+    if (!dateOfBirth) {
+      return 'N/A';
+    }
+    
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
+    
+    // Check if the date is valid
+    if (isNaN(birthDate.getTime())) {
+      return 'N/A';
+    }
+    
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
     
@@ -560,7 +570,7 @@ export default function PatientsPage() {
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-gray-400" />
                       <span className="text-sm font-medium text-gray-700">
-                        {calculateAge(patient.dateOfBirth)} years
+                        {calculateAge(patient.dateOfBirth) === 'N/A' ? 'N/A' : `${calculateAge(patient.dateOfBirth)} years`}
                       </span>
                     </div>
                   </TableCell>

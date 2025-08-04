@@ -275,8 +275,18 @@ export default function PatientDetailPage({ params }: { params: Usable<{ id: str
 
   // Calculate age from date of birth
   const calculateAge = (dateOfBirth: string) => {
+    if (!dateOfBirth) {
+      return 'N/A';
+    }
+    
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
+    
+    // Check if the date is valid
+    if (isNaN(birthDate.getTime())) {
+      return 'N/A';
+    }
+    
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
     
@@ -357,7 +367,7 @@ export default function PatientDetailPage({ params }: { params: Usable<{ id: str
               {patient.role}
             </div>
             <div className="px-4 py-2 rounded-full text-sm font-medium bg-white/80 backdrop-blur-sm border border-white/20 shadow-sm">
-              Age: {calculateAge(patient.dateOfBirth)}
+              Age: {calculateAge(patient.dateOfBirth) === 'N/A' ? 'N/A' : `${calculateAge(patient.dateOfBirth)} years`}
             </div>
           </div>
         </div>
@@ -513,7 +523,7 @@ export default function PatientDetailPage({ params }: { params: Usable<{ id: str
                   </div>
                   <div className="space-y-2">
                     <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Age</Label>
-                    <p className="text-base font-semibold text-gray-800">{calculateAge(patient.dateOfBirth)} years</p>
+                    <p className="text-base font-semibold text-gray-800">{calculateAge(patient.dateOfBirth) === 'N/A' ? 'N/A' : `${calculateAge(patient.dateOfBirth)} years`}</p>
                   </div>
                 </div>
               </div>
