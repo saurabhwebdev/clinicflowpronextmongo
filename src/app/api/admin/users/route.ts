@@ -58,11 +58,11 @@ export async function GET(request: NextRequest) {
       query.role = { $ne: 'master_admin' };
     }
 
-    const users = await User.find(query)
-      .select('-password')
+    const users = await User.find(query, '-password')
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     const total = await User.countDocuments(query);
 
