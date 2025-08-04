@@ -1,0 +1,8 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="12" fill="#3B82F6"/>
+  <path d="M32 16C24.268 16 18 22.268 18 30C18 37.732 24.268 44 32 44C39.732 44 46 37.732 46 30C46 22.268 39.732 16 32 16Z" fill="white"/>
+  <path d="M32 20C26.477 20 22 24.477 22 30C22 35.523 26.477 40 32 40C37.523 40 42 35.523 42 30C42 24.477 37.523 20 32 20Z" fill="#3B82F6"/>
+  <path d="M30 26H34V34H30V26Z" fill="white"/>
+  <path d="M26 28H38V32H26V28Z" fill="white"/>
+  <text x="32" y="54" text-anchor="middle" fill="#3B82F6" font-family="Arial, sans-serif" font-size="8" font-weight="bold">CLINIC</text>
+</svg>
