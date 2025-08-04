@@ -242,9 +242,9 @@ export default function SignIn() {
                 <div className="space-y-2 animate-fade-in-up" style={{ animationDelay: '1.3s' }}>
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password" className="text-sm font-semibold text-gray-700">Password</Label>
-                    <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors hover:underline">
-                      Forgot password?
-                    </Link>
+                    <span className="text-xs text-gray-500">
+                      Contact admin if you need password help
+                    </span>
                   </div>
                   <div className="relative group">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
