@@ -429,7 +429,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <div className="flex-1 lg:pl-0">
         {/* Top Header */}
-        <header className="bg-white/90 backdrop-blur-sm border-b h-16 shadow-sm" style={{ borderColor: clinicSettings.primaryColor + '20' }}>
+        <header className="bg-white/90 backdrop-blur-sm border-b h-16 shadow-sm relative z-40" style={{ borderColor: clinicSettings.primaryColor + '20' }}>
           <div className="flex items-center justify-between h-full px-4">
             <SimpleHamburger
               isOpen={sidebarOpen}
@@ -441,7 +441,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             <div className="flex items-center gap-4 ml-auto">
               <div 
-                className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-all duration-200 relative"
+                className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-all duration-200 relative z-50"
                 onMouseEnter={() => setProfileCardOpen(true)}
                 onMouseLeave={() => setProfileCardOpen(false)}
               >
