@@ -21,6 +21,8 @@ interface User {
   role: string;
   createdAt: string;
   requirePasswordChange: boolean;
+  passwordChangedAt?: string;
+  temporaryPassword?: string;
 }
 
 export default function UsersPage() {
@@ -145,6 +147,32 @@ export default function UsersPage() {
 
   const handleInputChange = (field: string, value: string) => {
     setNewUserForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleResetPassword = async (userId: string, userEmail: string) => {
+    if (!confirm(`Are you sure you want to reset the password for ${userEmail}?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/users/${userId}/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess(`Password reset successfully. New temporary password: ${data.temporaryPassword}`);
+        fetchUsers(); // Refresh user list
+      } else {
+        setError(data.error || 'Failed to reset password');
+      }
+    } catch (err) {
+      setError('An error occurred while resetting password.');
+    }
   };
 
   return (
@@ -308,7 +336,8 @@ export default function UsersPage() {
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Created</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Password Status</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -328,21 +357,45 @@ export default function UsersPage() {
                         </TableCell>
                         <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
                         <TableCell>
-                          {user.requirePasswordChange ? (
-                            <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
-                              Password change required
-                            </Badge>
-                          ) : (
-                            <Badge variant="outline" className="bg-green-100 text-green-800">
-                              Active
-                            </Badge>
+                          <div className="space-y-1">
+                            {user.requirePasswordChange ? (
+                              <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
+                                Temp Password Required
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="bg-green-100 text-green-800">
+                                Password Set
+                              </Badge>
+                            )}
+                            {user.temporaryPassword && (
+                              <div className="text-xs text-gray-600 font-mono bg-gray-100 p-1 rounded">
+                                Temp: {user.temporaryPassword}
+                              </div>
+                            )}
+                            {user.passwordChangedAt && (
+                              <div className="text-xs text-gray-500">
+                                Changed: {new Date(user.passwordChangedAt).toLocaleDateString()}
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {session?.user.role === 'master_admin' && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleResetPassword(user._id, user.email)}
+                              className="text-xs"
+                            >
+                              Reset Password
+                            </Button>
                           )}
                         </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center">No users found</TableCell>
+                      <TableCell colSpan={6} className="text-center">No users found</TableCell>
                     </TableRow>
                   )}
                 </TableBody>

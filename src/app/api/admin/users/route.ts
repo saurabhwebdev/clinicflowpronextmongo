@@ -22,15 +22,15 @@ function generateRandomPassword(length = 10) {
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     console.log('Session in GET /api/admin/users:', JSON.stringify(session, null, 2));
-    
+
     // Check if session exists, has user property, and user has appropriate role
     if (!session || !session.user) {
       console.log('No session or user found');
       return NextResponse.json({ error: 'Unauthorized - No session' }, { status: 403 });
     }
-    
+
     // Check if user has role property and if it's one of the allowed roles
     const userRole = session.user.role;
     if (!userRole || !['master_admin', 'admin'].includes(userRole)) {
@@ -39,33 +39,33 @@ export async function GET(request: NextRequest) {
     }
 
     await connectDB();
-    
+
     // Get query parameters
     const { searchParams } = new URL(request.url);
     const role = searchParams.get('role');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const skip = (page - 1) * limit;
-    
+
     // Build query
     const query: any = {};
     if (role) {
       query.role = role;
     }
-    
+
     // If not master admin, don't show master admins
     if (session.user.role !== 'master_admin') {
       query.role = { $ne: 'master_admin' };
     }
-    
+
     const users = await User.find(query)
       .select('-password')
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
-      
+
     const total = await User.countDocuments(query);
-    
+
     return NextResponse.json({
       users,
       pagination: {
@@ -85,15 +85,15 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     console.log('Session in POST /api/admin/users:', JSON.stringify(session, null, 2));
-    
+
     // Check if session exists, has user property, and user has appropriate role
     if (!session || !session.user) {
       console.log('No session or user found');
       return NextResponse.json({ error: 'Unauthorized - No session' }, { status: 403 });
     }
-    
+
     // Check if user has role property and if it's one of the allowed roles
     const userRole = session.user.role;
     if (!userRole || !['master_admin', 'admin'].includes(userRole)) {
@@ -101,10 +101,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized - Invalid role' }, { status: 403 });
     }
 
-    const { 
-      firstName, 
-      lastName, 
-      email, 
+    const {
+      firstName,
+      lastName,
+      email,
       role = 'patient',
       phone,
       address,
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { 
+      {
         message: 'User created successfully',
         user: {
           id: user._id,

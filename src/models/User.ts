@@ -20,6 +20,8 @@ export interface IUser extends Document {
   emailVerified?: Date;
   image?: string;
   requirePasswordChange?: boolean;
+  passwordChangedAt?: Date;
+  temporaryPassword?: string;
   createdBy?: mongoose.Types.ObjectId;
 }
 
@@ -57,6 +59,12 @@ const UserSchema = new Schema<IUser>({
   requirePasswordChange: {
     type: Boolean,
     default: false,
+  },
+  passwordChangedAt: {
+    type: Date,
+  },
+  temporaryPassword: {
+    type: String,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
