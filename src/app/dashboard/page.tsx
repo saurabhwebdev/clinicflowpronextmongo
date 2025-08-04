@@ -6,17 +6,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Users, 
-  Calendar, 
-  DollarSign, 
-  TrendingUp, 
-  Stethoscope, 
-  Pill, 
-  User, 
-  CheckCircle, 
-  AlertCircle, 
-  Database, 
+import {
+  Users,
+  Calendar,
+  DollarSign,
+  TrendingUp,
+  Stethoscope,
+  Pill,
+  User,
+  CheckCircle,
+  AlertCircle,
+  Database,
   Clock,
   Activity,
   BarChart3,
@@ -254,13 +254,13 @@ export default function Dashboard() {
   // Role-specific KPIs
   const getRoleKPIs = () => {
     const role = session?.user?.role;
-    
+
     switch (role) {
       case 'master_admin':
         const healthStatus = systemHealth?.status === 'healthy' ? '98.5%' : '95.2%';
         const healthChange = systemHealth?.status === 'healthy' ? '+2.1%' : '-1.8%';
         const healthChangeType = systemHealth?.status === 'healthy' ? 'positive' : 'negative';
-        
+
         return [
           {
             title: "Total Users",
@@ -306,7 +306,7 @@ export default function Dashboard() {
             } : null
           }
         ];
-      
+
       case 'admin':
         return [
           {
@@ -336,7 +336,7 @@ export default function Dashboard() {
             description: "Staff productivity"
           }
         ];
-      
+
       case 'doctor':
         return [
           {
@@ -376,10 +376,10 @@ export default function Dashboard() {
             isLoading: isLoadingDoctorStats
           }
         ];
-      
+
       case 'patient':
         return null; // No KPIs for patients
-      
+
       default:
         return [
           {
@@ -399,7 +399,7 @@ export default function Dashboard() {
   // Role-specific quick actions
   const getQuickActions = () => {
     const role = session?.user?.role;
-    
+
     switch (role) {
       case 'master_admin':
         return [
@@ -414,25 +414,25 @@ export default function Dashboard() {
             title: "System Health",
             description: "Monitor system status",
             icon: <Activity className="h-5 w-5" />,
-            href: "/admin/health",
+            href: "/api/health",
             color: "bg-green-500"
           },
           {
-            title: "Analytics",
+            title: "Reports & Analytics",
             description: "View detailed reports",
             icon: <BarChart3 className="h-5 w-5" />,
-            href: "/admin/analytics",
+            href: "/dashboard/reports",
             color: "bg-purple-500"
           },
           {
-            title: "System Settings",
-            description: "Configure system options",
+            title: "Clinic Settings",
+            description: "Configure clinic options",
             icon: <Settings className="h-5 w-5" />,
-            href: "/admin/settings",
+            href: "/dashboard/settings",
             color: "bg-orange-500"
           }
         ];
-      
+
       case 'admin':
         return [
           {
@@ -464,7 +464,7 @@ export default function Dashboard() {
             color: "bg-orange-500"
           }
         ];
-      
+
       case 'doctor':
         return [
           {
@@ -496,7 +496,7 @@ export default function Dashboard() {
             color: "bg-orange-500"
           }
         ];
-      
+
       case 'patient':
         return [
           {
@@ -528,7 +528,7 @@ export default function Dashboard() {
             color: "bg-orange-500"
           }
         ];
-      
+
       default:
         return [];
     }
@@ -587,7 +587,7 @@ export default function Dashboard() {
                   )}
                 </div>
                 <div className="flex items-center space-x-2 mt-2">
-                  <Badge 
+                  <Badge
                     variant={kpi.changeType === 'positive' ? 'default' : kpi.changeType === 'negative' ? 'destructive' : 'secondary'}
                     className="text-xs"
                   >
@@ -601,7 +601,7 @@ export default function Dashboard() {
                   )}
                 </div>
                 <p className="text-xs text-gray-600 mt-1">{kpi.description}</p>
-                
+
                 {/* Additional Info for System Uptime */}
                 {kpi.additionalInfo && (
                   <div className="mt-4 p-3 bg-gray-50 rounded-lg">
@@ -679,7 +679,7 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm">Revenue Overview</CardTitle>
@@ -701,7 +701,7 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm">System Status</CardTitle>
@@ -755,7 +755,7 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm">Patient Care</CardTitle>
@@ -777,7 +777,7 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm">Revenue & Prescriptions</CardTitle>
