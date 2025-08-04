@@ -43,6 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileCardOpen, setProfileCardOpen] = useState(false);
+  const [profileCardTimeout, setProfileCardTimeout] = useState<NodeJS.Timeout | null>(null);
   const [clinicSettings, setClinicSettings] = useState<ClinicSettings>({
     primaryColor: '#3b82f6',
     secondaryColor: '#1e40af',
@@ -106,6 +107,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const { signOut } = await import('next-auth/react');
     await signOut({ redirect: false });
     router.push('/auth/signin');
+  };
+
+  const handleProfileCardEnter = () => {
+    if (profileCardTimeout) {
+      clearTimeout(profileCardTimeout);
+      setProfileCardTimeout(null);
+    }
+    setProfileCardOpen(true);
+  };
+
+  const handleProfileCardLeave = () => {
+    const timeout = setTimeout(() => {
+      setProfileCardOpen(false);
+    }, 150); // Small delay to allow moving to the card
+    setProfileCardTimeout(timeout);
   };
 
   const getMenuItems = () => {
@@ -442,8 +458,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="flex items-center gap-4 ml-auto">
               <div 
                 className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-all duration-200 relative z-50"
-                onMouseEnter={() => setProfileCardOpen(true)}
-                onMouseLeave={() => setProfileCardOpen(false)}
+                onMouseEnter={handleProfileCardEnter}
+                onMouseLeave={handleProfileCardLeave}
               >
                 <Avatar className="h-8 w-8" style={{ borderColor: clinicSettings.primaryColor + '30' }}>
                   <AvatarImage src={session?.user?.image || undefined} />
@@ -460,6 +476,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <ProfileCard 
                   isOpen={profileCardOpen}
                   onClose={() => setProfileCardOpen(false)}
+                  onMouseEnter={handleProfileCardEnter}
+                  onMouseLeave={handleProfileCardLeave}
                   clinicSettings={clinicSettings}
                 />
               </div>

@@ -12,6 +12,8 @@ import { useSession } from 'next-auth/react';
 interface ProfileCardProps {
   isOpen: boolean;
   onClose: () => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
   clinicSettings: {
     primaryColor: string;
     secondaryColor: string;
@@ -19,7 +21,7 @@ interface ProfileCardProps {
   };
 }
 
-export function ProfileCard({ isOpen, onClose, clinicSettings }: ProfileCardProps) {
+export function ProfileCard({ isOpen, onClose, onMouseEnter, onMouseLeave, clinicSettings }: ProfileCardProps) {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -47,7 +49,11 @@ export function ProfileCard({ isOpen, onClose, clinicSettings }: ProfileCardProp
   if (!isOpen) return null;
 
   return (
-    <div className="absolute top-full right-0 mt-2 z-[9999]">
+    <div 
+      className="absolute top-full right-0 mt-2 z-[9999]"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <Card className="w-80 bg-white/95 backdrop-blur-sm border border-white/20 shadow-xl rounded-2xl">
         <CardHeader className="pb-4">
           <div className="flex items-center space-x-4">
