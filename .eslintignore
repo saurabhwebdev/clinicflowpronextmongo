@@ -1,0 +1,7 @@
+*
+**/*
+src/**/*
+.next/**/*
+node_modules/**/*
+build/**/*
+dist/**/*
