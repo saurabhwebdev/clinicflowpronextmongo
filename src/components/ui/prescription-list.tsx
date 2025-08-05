@@ -107,30 +107,22 @@ export function PrescriptionList({ patientId }: PrescriptionListProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Label htmlFor="status-filter">Filter by Status:</Label>
-          <Select
-            value={statusFilter}
-            onValueChange={setStatusFilter}
-          >
-            <SelectTrigger id="status-filter" className="w-[180px]">
-              <SelectValue placeholder="Select Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <Button
-          onClick={() => router.push(`/dashboard/patients/${patientId}/prescriptions/new`)}
+      <div className="flex items-center gap-2">
+        <Label htmlFor="status-filter">Filter by Status:</Label>
+        <Select
+          value={statusFilter}
+          onValueChange={setStatusFilter}
         >
-          Create Prescription
-        </Button>
+          <SelectTrigger id="status-filter" className="w-[180px]">
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="cancelled">Cancelled</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {prescriptions.length === 0 ? (

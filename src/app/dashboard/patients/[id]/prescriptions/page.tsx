@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -12,25 +12,27 @@ interface Patient {
   lastName: string;
 }
 
-export default function PatientPrescriptionsPage({ 
-  params 
-}: { 
-  params: { id: string } 
+export default function PatientPrescriptionsPage({
+  params
+}: {
+  params: Promise<{ id: string }>
 }) {
   const router = useRouter();
   const [patient, setPatient] = useState<Patient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const { id } = use(params);
+
   useEffect(() => {
     fetchPatient();
-  }, [params.id]);
+  }, [id]);
 
   const fetchPatient = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/patients/${params.id}`);
+      const response = await fetch(`/api/patients/${id}`);
       if (!response.ok) throw new Error("Failed to fetch patient");
-      
+
       const data = await response.json();
       setPatient(data);
     } catch (error) {
@@ -54,7 +56,7 @@ export default function PatientPrescriptionsPage({
     return (
       <div className="p-6">
         <p>Patient not found</p>
-        <Button 
+        <Button
           onClick={() => router.push("/dashboard/patients")}
           className="mt-4"
         >
@@ -79,12 +81,12 @@ export default function PatientPrescriptionsPage({
           <div className="flex gap-2">
             <Button
               variant="outline"
-              onClick={() => router.push(`/dashboard/patients/${params.id}`)}
+              onClick={() => router.push(`/dashboard/patients/${id}`)}
             >
               Back to Patient
             </Button>
             <Button
-              onClick={() => router.push(`/dashboard/patients/${params.id}/prescriptions/new`)}
+              onClick={() => router.push(`/dashboard/patients/${id}/prescriptions/new`)}
             >
               Create Prescription
             </Button>
@@ -92,7 +94,7 @@ export default function PatientPrescriptionsPage({
         </div>
       </div>
 
-      <PrescriptionList patientId={params.id} />
+      <PrescriptionList patientId={id} />
     </div>
   );
 }
