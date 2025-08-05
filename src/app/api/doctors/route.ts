@@ -19,6 +19,7 @@ export async function GET() {
       .select("_id firstName lastName")
       .sort({ firstName: 1, lastName: 1 });
 
+    console.log("Found doctors:", doctors.length, doctors); // Debug log
     return NextResponse.json({ doctors });
   } catch (error) {
     console.error("Failed to fetch doctors:", error);
